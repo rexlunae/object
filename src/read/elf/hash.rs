@@ -1,8 +1,8 @@
 use core::mem;
 
-use crate::elf;
 use crate::endian::{U32, U64};
 use crate::read::{ReadError, ReadRef, Result, SymbolIndex};
+use crate::{elf, StringTable};
 
 use super::{FileHeader, Sym, SymbolTable, Version, VersionTable};
 
@@ -56,16 +56,16 @@ impl<'data, Elf: FileHeader> HashTable<'data, Elf> {
         name: &[u8],
         hash: u32,
         version: Option<&Version<'_>>,
-        symbols: &SymbolTable<'data, Elf, R>,
+        symbols: &'data [Elf::Sym],
+        strings: StringTable<'data, R>,
         versions: &VersionTable<'data, Elf>,
     ) -> Option<(SymbolIndex, &'data Elf::Sym)> {
         // Get the chain start from the bucket for this hash.
         let mut index = self.bucket(endian, hash);
         // Avoid infinite loop.
         let mut i = 0;
-        let strings = symbols.strings();
         while index != SymbolIndex(0) && i < self.chains.len() {
-            if let Ok(symbol) = symbols.symbol(index) {
+            if let Some(symbol) = symbols.get(index.0) {
                 if symbol.name(endian, strings) == Ok(name)
                     && versions.matches(endian, index, version)
                 {
@@ -177,7 +177,8 @@ impl<'data, Elf: FileHeader> GnuHashTable<'data, Elf> {
         name: &[u8],
         hash: u32,
         version: Option<&Version<'_>>,
-        symbols: &SymbolTable<'data, Elf, R>,
+        symbols: &'data [Elf::Sym],
+        strings: StringTable<'data, R>,
         versions: &VersionTable<'data, Elf>,
     ) -> Option<(SymbolIndex, &'data Elf::Sym)> {
         let word_bits = mem::size_of::<Elf::Word>() as u32 * 8;
@@ -212,8 +213,7 @@ impl<'data, Elf: FileHeader> GnuHashTable<'data, Elf> {
         }
 
         // Test symbols in the chain.
-        let strings = symbols.strings();
-        let symbols = symbols.symbols().get(index.0..)?;
+        let symbols = symbols.get(index.0..)?;
         let values = self
             .values
             .get(index.0.checked_sub(self.symbol_base as usize)?..)?;
