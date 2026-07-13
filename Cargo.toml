@@ -114,7 +114,7 @@ unstable-all = ["all", "unstable"]
 # stable interface of this crate.
 rustc-dep-of-std = ['core', 'compiler_builtins', 'alloc', 'memchr/rustc-dep-of-std']
 
-[workspace]
-members = ["crates/*"]
-default-members = [".", "crates/examples"]
-resolver = "2"
+# [workspace]
+# members = ["crates/*"]
+# default-members = [".", "crates/examples"]
+# resolver = "2"

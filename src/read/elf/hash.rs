@@ -1,10 +1,13 @@
 use core::mem;
 
-use crate::endian::{U32, U64};
-use crate::read::{ReadError, ReadRef, Result, SymbolIndex};
-use crate::{elf, StringTable};
+use crate::{
+    elf,
+    endian::{U32, U64},
+    read::{ReadError, ReadRef, Result, SymbolIndex},
+    StringTable,
+};
 
-use super::{FileHeader, Sym, SymbolTable, Version, VersionTable};
+use super::{FileHeader, Sym, Version, VersionTable};
 
 /// A SysV symbol hash table in an ELF file.
 ///
@@ -84,11 +87,11 @@ impl<'data, Elf: FileHeader> HashTable<'data, Elf> {
 /// Returned by [`SectionHeader::gnu_hash`](super::SectionHeader::gnu_hash).
 #[derive(Debug)]
 pub struct GnuHashTable<'data, Elf: FileHeader> {
-    symbol_base: u32,
-    bloom_shift: u32,
-    bloom_filters: &'data [u8],
-    buckets: &'data [U32<Elf::Endian>],
-    values: &'data [U32<Elf::Endian>],
+    pub symbol_base: u32,
+    pub bloom_shift: u32,
+    pub bloom_filters: &'data [u8],
+    pub buckets: &'data [U32<Elf::Endian>],
+    pub values: &'data [U32<Elf::Endian>],
 }
 
 impl<'data, Elf: FileHeader> GnuHashTable<'data, Elf> {

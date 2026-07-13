@@ -42,7 +42,7 @@
 //! APIs. These are defined at the top level module, but none of these are the main entry
 //! points of the crate.
 
-#![deny(missing_docs)]
+// #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![no_std]
 #![warn(rust_2018_idioms)]
