@@ -14,8 +14,8 @@ use super::{FileHeader, Sym, Version, VersionTable};
 /// Returned by [`SectionHeader::hash`](super::SectionHeader::hash).
 #[derive(Debug)]
 pub struct HashTable<'data, Elf: FileHeader> {
-    buckets: &'data [U32<Elf::Endian>],
-    chains: &'data [U32<Elf::Endian>],
+    pub buckets: &'data [U32<Elf::Endian>],
+    pub chains: &'data [U32<Elf::Endian>],
 }
 
 impl<'data, Elf: FileHeader> HashTable<'data, Elf> {
